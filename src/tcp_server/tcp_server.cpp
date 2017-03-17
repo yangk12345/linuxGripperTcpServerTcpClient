@@ -9,7 +9,7 @@
 #define Param_num 4
 #define Param_long 4  // In case of corruption, Param length should not be longer than MAX_INT>>8 
 #define Data_Freq 10
-#define Action_Freq 5  // Data_Freq/Action Freq must be an intiger
+#define Action_Freq 2  // Data_Freq/Action Freq must be an intiger
 
 
 tcp_server::tcp_server(int listen_port){
@@ -97,6 +97,10 @@ int tcp_server::recv_msg(Gripper *gripper) {
 						RSpeed/=(Data_Freq/Action_Freq);
 						RForce/=(Data_Freq/Action_Freq);
 						
+						if(RPosition>1800)
+							RPosition=1800;
+						if(RPosition<1200)
+							RPosition=1200;
 						if(Max_input<RPosition){
 							Max_input=RPosition;
 							printf("Max=%d,Min=%d\n",Max_input,Min_input);
@@ -119,7 +123,7 @@ int tcp_server::recv_msg(Gripper *gripper) {
 							printf("Required Position=%d\nRequired Speed=%d\nRequired Force=%d\n",RPosition,RSpeed,RForce);
 
 							gripper->go(false);
-							gripper->setPosition(RPosition);
+							gripper->setPosition(255-RPosition);
 							if(RSpeed)
 								gripper->setSpeed(RSpeed);
 							if(RForce)
