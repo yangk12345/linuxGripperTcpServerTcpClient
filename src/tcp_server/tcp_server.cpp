@@ -36,8 +36,7 @@ tcp_server::tcp_server(int listen_port){
 
 int tcp_server::recv_msg(Gripper *gripper) {
 
-
-	int i=0,j=0,k=0,num=0,count=0;;
+	int i=0,j=0,num=0,count=0;;
  	char Param[Param_num][Param_long]={0};
 	int stop_flag=0;
 	int RPosition=0,RSpeed=0,RForce=0;
@@ -69,7 +68,7 @@ int tcp_server::recv_msg(Gripper *gripper) {
 				}
 				else
 				{
-					printf("Recieved:%s\n", buffer);
+					//printf("Recieved:%s\n", buffer);
 
 					/*seperate buffer data into Param_num parts*/
 					while((buffer[num]!='\0')&&(i<Param_num)){
@@ -101,6 +100,7 @@ int tcp_server::recv_msg(Gripper *gripper) {
 							RPosition=1800;
 						if(RPosition<1200)
 							RPosition=1200;
+
 						if(Max_input<RPosition){
 							Max_input=RPosition;
 							printf("Max=%d,Min=%d\n",Max_input,Min_input);
@@ -110,29 +110,20 @@ int tcp_server::recv_msg(Gripper *gripper) {
 							printf("Max=%d,Min=%d\n",Max_input,Min_input);
 						}
 
-						/*test mode, not very necessary*/
-						//if(k<10){
-						//		k++;
-						//}
-
-						/*test mode end*/
-						else{	
-	
-							/*action mode*/	
+						if(Max_input!=Min_input)
 							RPosition=((RPosition-Min_input)*255)/(Max_input-Min_input);	
-							printf("Required Position=%d\nRequired Speed=%d\nRequired Force=%d\n",RPosition,RSpeed,RForce);
+						printf("Required Position=%d\nRequired Speed=%d\nRequired Force=%d\n",RPosition,RSpeed,RForce);
 
-							gripper->go(false);
-							gripper->setPosition(255-RPosition);
-							if(RSpeed)
-								gripper->setSpeed(RSpeed);
-							if(RForce)
-								gripper->setForce(RForce);
-							gripper->go(true);
-	
-							printf("actual position=%d\n",gripper->getPosition());
-							/*action mode end*/
-						}
+						gripper->go(false);
+						gripper->setPosition(255-RPosition);
+						if(RSpeed)
+							gripper->setSpeed(RSpeed);
+						if(RForce)
+							gripper->setForce(RForce);
+						gripper->go(true);
+
+						printf("actual position=%d\n",gripper->getPosition());
+						/*action mode end*/
 
 						RPosition=0;	
 						RSpeed=0;	
@@ -159,5 +150,6 @@ int tcp_server::recv_msg(Gripper *gripper) {
 		}
 	}
 end:
+	close(accept_fd);
 	return 0;
 }
