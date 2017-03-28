@@ -42,7 +42,7 @@ int main(int argc, char*argv[] ) {
 	}cout << "activated" <<endl<<endl;
 
 	if(argv[1]==NULL)
-		gripper.setSpeed(100);
+		gripper.setSpeed(255);
 	else
 		gripper.setSpeed(atoi(argv[1]));
 	if(argv[2]==NULL)
