@@ -68,7 +68,7 @@ int tcp_server::recv_msg(Gripper *gripper) {
 				}
 				else
 				{
-					//printf("Recieved:%s\n", buffer);
+					printf("Recieved:%s\n", buffer);
 
 					/*seperate buffer data into Param_num parts*/
 					while((buffer[num]!='\0')&&(i<Param_num)){
@@ -86,7 +86,7 @@ int tcp_server::recv_msg(Gripper *gripper) {
 					}/*seperater end*/
 
 					/*Filter*/
-					RPosition+=atoi(Param[0]);
+					RPosition+=(int)(atof(Param[0])*1000);
 					RSpeed+=atoi(Param[1]);
 					RForce+=atoi(Param[2]);
 
@@ -96,10 +96,6 @@ int tcp_server::recv_msg(Gripper *gripper) {
 						RSpeed/=(Data_Freq/Action_Freq);
 						RForce/=(Data_Freq/Action_Freq);
 						
-						if(RPosition>1800)
-							RPosition=1800;
-						if(RPosition<1200)
-							RPosition=1200;
 
 						if(Max_input<RPosition){
 							Max_input=RPosition;
@@ -111,11 +107,16 @@ int tcp_server::recv_msg(Gripper *gripper) {
 						}
 
 						if(Max_input!=Min_input)
-							RPosition=((RPosition-Min_input)*255)/(Max_input-Min_input);	
+							RPosition=((RPosition-0.2*Max_input-0.8*Min_input)*255)/(0.6*Max_input-0.6*Min_input);	
+						if(RPosition<0)
+							RPosition=0;
+						if(RPosition>255)
+							RPosition=255;
 						printf("Required Position=%d\nRequired Speed=%d\nRequired Force=%d\n",RPosition,RSpeed,RForce);
 
 						gripper->go(false);
-						gripper->setPosition(255-RPosition);
+						//gripper->setPosition(255-RPosition);
+						gripper->setPosition(RPosition);
 						if(RSpeed)
 							gripper->setSpeed(RSpeed);
 						if(RForce)

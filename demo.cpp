@@ -34,13 +34,17 @@ int main(int argc, char*argv[] ) {
 
 	//!Activation
 	//cout << "Activating in Basic mode" <<endl;
-	while(!gripper.isActivated()){
+	/*while(!gripper.isActivated()){
 
 		gripper.activate();
+		//gripper.activate(Gripper::Pinch);
 		usleep(sec);
 
-	}cout << "activated" <<endl<<endl;
+	}cout << "activated" <<endl<<endl;*/
 
+	gripper.activate();
+	usleep(sec);
+	printf("activated !\n");
 	if(argv[1]==NULL)
 		gripper.setSpeed(255);
 	else
